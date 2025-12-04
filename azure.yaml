@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: zavastorefront
+metadata:
+  template: zavastorefront@0.0.1
+
+# Azure Developer CLI hooks
+hooks:
+  # Build the container image using ACR Tasks (no local Docker needed)
+  predeploy:
+    posix:
+      shell: sh
+      run: |
+        echo "Building container image using ACR Tasks..."
+        az acr build \
+          --registry "${AZURE_CONTAINER_REGISTRY_NAME}" \
+          --image zavastorefront:$(date +%Y%m%d%H%M%S) \
+          --image zavastorefront:latest \
+          --file ./src/Dockerfile \
+          ./src
+    windows:
+      shell: pwsh
+      run: |
+        Write-Host "Building container image using ACR Tasks..."
+        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+        az acr build `
+          --registry "$env:AZURE_CONTAINER_REGISTRY_NAME" `
+          --image "zavastorefront:$timestamp" `
+          --image "zavastorefront:latest" `
+          --file ./src/Dockerfile `
+          ./src
+
+  # Update App Service to use the latest image
+  postdeploy:
+    posix:
+      shell: sh
+      run: |
+        echo "Updating App Service to use the latest image..."
+        az webapp config container set \
+          --name "${AZURE_APP_SERVICE_NAME}" \
+          --resource-group "${AZURE_RESOURCE_GROUP}" \
+          --container-image-name "${AZURE_CONTAINER_REGISTRY_ENDPOINT}/zavastorefront:latest" \
+          --container-registry-url "https://${AZURE_CONTAINER_REGISTRY_ENDPOINT}"
+    windows:
+      shell: pwsh
+      run: |
+        Write-Host "Updating App Service to use the latest image..."
+        az webapp config container set `
+          --name "$env:AZURE_APP_SERVICE_NAME" `
+          --resource-group "$env:AZURE_RESOURCE_GROUP" `
+          --container-image-name "$env:AZURE_CONTAINER_REGISTRY_ENDPOINT/zavastorefront:latest" `
+          --container-registry-url "https://$env:AZURE_CONTAINER_REGISTRY_ENDPOINT"
+
+# Infrastructure configuration
+infra:
+  provider: bicep
+  path: infra
+
+# Service definitions
+services:
+  zavastorefront:
+    project: ./src
+    language: dotnet
+    host: containerapp
