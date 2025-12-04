@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: zavastorefont
+metadata:
+  template: azd-init@1.0.0
+
+# Azure Developer CLI configuration for ZavaStorefront
+infra:
+  provider: bicep
+  path: ./infra
+
+# Service definitions
+services:
+  zavastorefont:
+    project: ./src
+    host: appservice
+    language: dotnet
+
+# Hooks for container build without local Docker
+hooks:
+  # Build container image in ACR before deployment
+  predeploy:
+    posix:
+      shell: sh
+      run: |
+        echo "Building container image in Azure Container Registry..."
+        az acr build --registry ${AZURE_CONTAINER_REGISTRY_NAME} --image zavastorefont:latest --file ./src/Dockerfile ./src
+    windows:
+      shell: pwsh
+      run: |
+        Write-Host "Building container image in Azure Container Registry..."
+        az acr build --registry $env:AZURE_CONTAINER_REGISTRY_NAME --image zavastorefont:latest --file ./src/Dockerfile ./src
