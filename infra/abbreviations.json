@@ -1,0 +1,9 @@
+{
+  "containerRegistryRegistries": "cr",
+  "cognitiveServicesAccounts": "cog",
+  "insightsComponents": "appi",
+  "operationalInsightsWorkspaces": "log",
+  "resourcesResourceGroups": "rg-",
+  "webServerFarms": "plan-",
+  "webSitesAppService": "app-"
+}

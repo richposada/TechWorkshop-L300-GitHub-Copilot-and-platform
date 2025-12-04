@@ -91,9 +91,12 @@ htmlcov/
 .ipynb_checkpoints
 
 # Docker
-**/Dockerfile*
 **/.dockerignore
 docker-compose.override.yml
+# Note: Dockerfile is tracked for Azure deployment
+
+# Azure Developer CLI
+.azure/
 
 # Logs
 *.log
