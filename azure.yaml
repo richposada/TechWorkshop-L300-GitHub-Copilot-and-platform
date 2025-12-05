@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: zavasf
+metadata:
+  template: zavasf@0.0.1-beta
+
+services:
+  web:
+    project: ./src
+    language: dotnet
+    host: appservice
+    docker:
+      path: ./src/Dockerfile
+      context: ./src
+    hooks:
+      predeploy:
+        windows:
+          shell: pwsh
+          run: |
+            Write-Host "Building container image using ACR Tasks (no local Docker required)..."
+            $acrName = azd env get-value AZURE_CONTAINER_REGISTRY_NAME
+            if ([string]::IsNullOrEmpty($acrName)) {
+              Write-Error "AZURE_CONTAINER_REGISTRY_NAME not found. Ensure infrastructure is deployed first."
+              exit 1
+            }
+            az acr build --registry $acrName --image zavasf/web:latest --file ./src/Dockerfile ./src
+        posix:
+          shell: sh
+          run: |
+            echo "Building container image using ACR Tasks (no local Docker required)..."
+            acrName=$(azd env get-value AZURE_CONTAINER_REGISTRY_NAME)
+            if [ -z "$acrName" ]; then
+              echo "Error: AZURE_CONTAINER_REGISTRY_NAME not found. Ensure infrastructure is deployed first."
+              exit 1
+            fi
+            az acr build --registry "$acrName" --image zavasf/web:latest --file ./src/Dockerfile ./src
+
+infra:
+  path: ./infra
+  
+pipeline:
+  provider: github
