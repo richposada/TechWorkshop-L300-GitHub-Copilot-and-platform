@@ -89,7 +89,7 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
    - Manual trigger via "Actions" tab
 
 2. **Build and Deploy:**
-   - Build .NET 10.0 application
+   - Build .NET 8.0 application
    - Create Docker container image
    - Push image to Azure Container Registry
    - Deploy to Azure App Service
@@ -127,7 +127,7 @@ After the workflow completes:
 
 3. **Check Docker Build:**
    - Ensure `src/Dockerfile` exists and is valid
-   - Verify the .NET version matches your project (currently 10.0)
+   - Verify the .NET version matches your project (currently 8.0)
 
 4. **View Detailed Logs:**
    - Click on the failed workflow run in GitHub Actions
