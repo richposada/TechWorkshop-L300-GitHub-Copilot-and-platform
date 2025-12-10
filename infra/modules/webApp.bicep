@@ -16,9 +16,6 @@ param dockerImageName string = 'zavastore:latest'
 @description('Application Insights Connection String')
 param appInsightsConnectionString string = ''
 
-@description('Application Insights Instrumentation Key')
-param appInsightsInstrumentationKey string = ''
-
 @description('Tags to apply to the resource')
 param tags object = {}
 
@@ -59,10 +56,6 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
           value: '~3'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsightsInstrumentationKey
         }
       ]
     }

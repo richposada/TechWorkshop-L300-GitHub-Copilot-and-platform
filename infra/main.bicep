@@ -117,7 +117,6 @@ module webApp 'modules/webApp.bicep' = {
     containerRegistryLoginServer: containerRegistry.outputs.loginServer
     dockerImageName: '${appName}:${dockerImageTag}'
     appInsightsConnectionString: appInsights.outputs.connectionString
-    appInsightsInstrumentationKey: appInsights.outputs.instrumentationKey
     tags: tags
   }
 }
@@ -153,6 +152,5 @@ output acrLoginServer string = containerRegistry.outputs.loginServer
 output webAppName string = webApp.outputs.name
 output webAppUrl string = 'https://${webApp.outputs.defaultHostName}'
 output appInsightsName string = appInsights.outputs.name
-output appInsightsInstrumentationKey string = appInsights.outputs.instrumentationKey
 output aiHubName string = aiHub.outputs.name
 output aiHubEndpoint string = aiHub.outputs.endpoint
