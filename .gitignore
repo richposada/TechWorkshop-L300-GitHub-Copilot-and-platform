@@ -93,6 +93,10 @@ htmlcov/
 # Docker
 docker-compose.override.yml
 
+# Bicep generated files
+infra/**/*.json
+!infra/main.parameters.json
+
 # Logs
 *.log
 logs/

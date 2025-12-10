@@ -4,8 +4,8 @@ param principalId string
 @description('Role Definition ID (GUID)')
 param roleDefinitionId string
 
-@description('Target resource ID for the role assignment')
-param targetResourceId string
+@description('Container Registry name')
+param containerRegistryName string
 
 @description('Principal type')
 @allowed([
@@ -16,9 +16,15 @@ param targetResourceId string
 ])
 param principalType string = 'ServicePrincipal'
 
+// Reference the existing Container Registry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+  name: containerRegistryName
+}
+
+// Assign role at the Container Registry scope
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(principalId, roleDefinitionId, targetResourceId)
-  scope: resourceId('Microsoft.ContainerRegistry/registries', last(split(targetResourceId, '/')))
+  name: guid(principalId, roleDefinitionId, containerRegistry.id)
+  scope: containerRegistry
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
     principalId: principalId

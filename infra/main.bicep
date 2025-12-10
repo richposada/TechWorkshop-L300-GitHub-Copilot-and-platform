@@ -141,7 +141,7 @@ module acrPullRoleAssignment 'modules/roleAssignment.bicep' = {
   params: {
     principalId: webApp.outputs.principalId
     roleDefinitionId: acrPullRoleId
-    targetResourceId: containerRegistry.outputs.id
+    containerRegistryName: containerRegistry.outputs.name
     principalType: 'ServicePrincipal'
   }
 }
