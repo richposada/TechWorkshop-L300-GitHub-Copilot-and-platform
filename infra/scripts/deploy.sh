@@ -83,7 +83,7 @@ else
     DEPLOYMENT_OUTPUT=$(az deployment group create \
         --resource-group "$RESOURCE_GROUP" \
         --template-file infra/main.bicep \
-        --parameters infra/main.parameters.json \
+        --parameters @infra/main.parameters.json \
         --query properties.outputs \
         --output json)
     
