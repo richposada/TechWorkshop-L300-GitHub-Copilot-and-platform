@@ -2,6 +2,43 @@
 
 This lab guides you through a series of practical exercises focused on modernising Zava's business applications and databases by migrating everything to Azure, leveraging GitHub Enterprise, Copilot, and Azure services. Each exercise is designed to deliver hands-on experience in governance, automation, security, AI integration, and observability, ensuring Zava’s transition to Azure is robust, secure, and future-ready.
 
+
+## ZavaStorefront Application
+
+The ZavaStorefront is a .NET 6.0 web application that can be deployed as a containerized application to Azure App Service.
+
+### Azure Infrastructure
+
+The application infrastructure is defined using Bicep templates and can be deployed to Azure using Azure Developer CLI (azd). The infrastructure includes:
+
+- **Azure Container Registry (ACR)** - For storing Docker container images
+- **App Service (Linux)** - For hosting the containerized web application
+- **Application Insights** - For monitoring and telemetry
+- **Azure AI Services** - For GPT-4 and Phi model access
+- **Managed Identity** - For secure, password-less authentication
+
+For detailed deployment instructions, see [Infrastructure Documentation](./infra/README.md).
+
+### Quick Start
+
+1. **Deploy Infrastructure**:
+   ```bash
+   azd auth login
+   azd provision
+   ```
+
+2. **Deploy Application**:
+   ```bash
+   azd deploy
+   ```
+
+3. **Access the Application**:
+   ```bash
+   azd show
+   ```
+
+For more information, see the [Infrastructure README](./infra/README.md).
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
