@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: zavastorefrontapp
+metadata:
+  template: zavastorefrontapp
+
+services:
+  web:
+    project: ./src
+    language: dotnet
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: ./src
+
+infra:
+  provider: bicep
+  path: infra
+  module: main
+
+hooks:
+  postprovision:
+    shell: sh
+    run: |
+      # Build and push the Docker image to ACR using cloud build
+      echo "Building and pushing Docker image to ACR..."
+      ACR_NAME=$(azd env get-value ACR_NAME)
+      if [ -n "$ACR_NAME" ]; then
+        az acr build --registry $ACR_NAME --image zavastorefrontapp:latest --file ./Dockerfile ./src
+      else
+        echo "ACR_NAME not found in environment. Skipping image build."
+      fi

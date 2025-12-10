@@ -1,0 +1,60 @@
+name: Build and Push to ACR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push image to ACR
+        run: |
+          # Get ACR name from environment or use default
+          ACR_NAME="${{ secrets.ACR_NAME }}"
+          if [ -z "$ACR_NAME" ]; then
+            ACR_NAME="acrzavastoredevwestus3"
+          fi
+          
+          # Build and push using cloud-based ACR build
+          az acr build \
+            --registry $ACR_NAME \
+            --image zavastorefrontapp:latest \
+            --image zavastorefrontapp:${{ github.sha }} \
+            --file ./Dockerfile \
+            ./src
+          
+          echo "Image pushed to $ACR_NAME.azurecr.io/zavastorefrontapp:latest"
+
+      - name: Update Web App
+        run: |
+          # Restart the web app to pull the new image
+          WEBAPP_NAME="${{ secrets.WEBAPP_NAME }}"
+          RG_NAME="${{ secrets.RESOURCE_GROUP_NAME }}"
+          
+          if [ -n "$WEBAPP_NAME" ] && [ -n "$RG_NAME" ]; then
+            az webapp restart --name $WEBAPP_NAME --resource-group $RG_NAME
+            echo "Web App $WEBAPP_NAME restarted successfully"
+          else
+            echo "WEBAPP_NAME or RESOURCE_GROUP_NAME not set. Skipping restart."
+          fi
