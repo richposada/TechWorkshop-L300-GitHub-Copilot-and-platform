@@ -91,9 +91,11 @@ htmlcov/
 .ipynb_checkpoints
 
 # Docker
-**/Dockerfile*
-**/.dockerignore
 docker-compose.override.yml
+
+# Bicep generated files
+infra/**/*.json
+!infra/main.parameters.json
 
 # Logs
 *.log
